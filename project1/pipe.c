@@ -2,6 +2,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <sys/types.h>
+#include <string.h>
 
 #define MAXLINE 4096
 #define STDOUT_FILENO 1
@@ -26,13 +27,13 @@ int main(int argc, char *argv[]){
 
     // parent
     close(pipe1);
-    close(pipe1);
+    close(pipe2);
 
     client(pipe1, pipe2);
 
     waitpid(childpid, NULL, 0); // wait for child to terminate
 
-    exitr(0);
+    exit(0);
 
 }
 
@@ -63,7 +64,9 @@ void server(int readfd, int writefd){
         exit(0);
     }
 
-    if ((fd = open(buff, 0_RDONLY))<0){
+    buff[n] = '\0';
+
+    if ((fd = open(buff, O_RDONLY))<0){
         snprintf(buff+n, sizeof(buff)-n, ": can't open, %s\n", strerror(errno));
         n = strlen(buff);
         write(writefd, buff, n);
