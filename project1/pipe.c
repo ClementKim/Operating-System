@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <string.h>
-#include <sys/wait.h> // 추가 필요
+#include <sys/wait.h>
 
 #define MAXLINE 4096
 #define STDOUT_FILENO 1
