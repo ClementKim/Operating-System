@@ -136,7 +136,7 @@ int main(int argc, char* argv[]){
                     exit(1);
                 }
 
-                printf("received number: %d\n", file_length);
+                printf("received number: %d \n", file_length);
             }
 
             memset(file_name, 0, SIZE * sizeof(char));

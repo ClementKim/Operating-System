@@ -199,7 +199,9 @@ int main(void){
                     exit(1);
                 }
 
-                if (write(named_pipe, &bytes_of_file_write, sizeof(int)) < 0){
+                sleep(1);
+
+                if ((write(named_pipe, &bytes_of_file_write, sizeof(int))) < 0){
                     printf("Failed to send number of written bytes \n");
                     unlink(PIPE);
                     exit(1);
