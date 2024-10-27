@@ -30,19 +30,22 @@ int main(int argc, char* argv[]){
     printf("----------client----------\n\n");
 
     while (TRUE){
-        printf("do you want to terminate this code?(y: yes, n: no: ");
+        printf("do you want to terminate this code?(y: yes, n: no): ");
         scanf("%c", &terminate);
         while (getchar() != '\n');
 
         if (terminate == 'y'){
-
+            printf("Terminating server and client\n");
+            while (write(named_pipe, "terminate\n", sizeof("terminate\n")) < 0);
+            printf("----------terminating client----------\n\n");
+            break;
         }
 
         printf("Enter the file name: ");
         fgets(file_name, SIZE, stdin);
         file_name[strlen(file_name) - 1] = '\0';
 
-        printf("Type the file access type (r: read, w: write, t: terminate): ");
+        printf("Type the file access type (r: read, w: write): ");
         scanf("%c", &file_mode);
         while(getchar() != '\n');
 
@@ -93,10 +96,6 @@ int main(int argc, char* argv[]){
             else {
                 printf("%s\n", buff);
             }
-
-            memset(file_name, 0, SIZE * sizeof(char));
-            memset(&file_mode, 0, sizeof(char));
-            memset(buff, 0, SIZE * sizeof(char));
         }
 
         else if (file_mode == 'w'){
@@ -150,27 +149,18 @@ int main(int argc, char* argv[]){
                 printf("received the length of the file: %d \n", file_length);
             }
 
-            memset(file_name, 0, SIZE * sizeof(char));
-            memset(&file_mode, 0, sizeof(char));
-            memset(buff, 0, SIZE * sizeof(char));
-        }
-
-        else if (file_mode == 't'){
-            printf("Terminating server and client\n");
-            while (write(named_pipe, "terminate\n", 10) < 0);
-            printf("----------terminating client----------\n\n");
-            break;
         }
 
         else{
             printf("You typed improper mode \n");
-
-            // initialization
-            memset(file_name, 0, SIZE * sizeof(char));
-            file_mode = 0;
-
-            continue;
         }
+
+        memset(file_name, 0, SIZE * sizeof(char));
+        memset(&file_mode, 0, sizeof(char));
+        memset(buff, 0, SIZE * sizeof(char));
+        file_mode = 0;
+        terminate = 0;
+
     }
 
     return 0;

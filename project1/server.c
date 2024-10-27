@@ -45,6 +45,7 @@ int main(void){
     printf("----------server----------\n\n");
 
     while (TRUE){
+        // memset(buff, 0, SIZE * sizeof(char));
         // receive access request from client
         if (read(named_pipe, buff, SIZE) < 0){
             printf("failed to call read");
@@ -54,6 +55,7 @@ int main(void){
 
         sleep(1);
 
+        printf("%s \n", buff);
         if (!(strcmp(buff, "request\n")))
             printf("received request from the client \n");
 
@@ -138,6 +140,7 @@ int main(void){
                 memset(received_file_name, 0, SIZE * sizeof(char));
                 memset(&access_mode, 0, sizeof(char));
                 memset(buff, 0, SIZE * sizeof(char));
+                bytes_of_file_write = 0;
 
                 exit(0);
             }
