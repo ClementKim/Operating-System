@@ -26,12 +26,14 @@ int main(int argc, char* argv[]){
         exit(1);
     }
 
+    printf("----------client----------\n\n");
+
     while (TRUE){
         printf("Enter the file name: ");
         fgets(file_name, SIZE, stdin);
         file_name[strlen(file_name) - 1] = '\0';
 
-        printf("Type the file access type (r or w): ");
+        printf("Type the file access type (r: read, w: write, t: terminate): ");
         scanf("%c", &file_mode);
         while(getchar() != '\n');
 
@@ -70,7 +72,7 @@ int main(int argc, char* argv[]){
 
             if ((read(named_pipe, buff, SIZE)) < 0){
                 printf("failed to receive data from the server \n");
-                exit(1);
+                exit(2);
             }
 
             sleep(1);
@@ -121,7 +123,7 @@ int main(int argc, char* argv[]){
 
             if (read(named_pipe, buff, SIZE) < 0){
                 printf("failed to receive data from the server \n");
-                exit(1);
+                exit(2);
             }
 
             sleep(1);
@@ -132,11 +134,11 @@ int main(int argc, char* argv[]){
 
             else {
                 if (read(named_pipe, &file_length, sizeof(int)) < 0){
-                    printf("error \n");
-                    exit(1);
+                    printf("Failed to receive the length of the file \n");
+                    exit(2);
                 }
 
-                printf("received number: %d \n", file_length);
+                printf("received the length of the file: %d \n", file_length);
             }
 
             memset(file_name, 0, SIZE * sizeof(char));
@@ -144,8 +146,15 @@ int main(int argc, char* argv[]){
             memset(buff, 0, SIZE * sizeof(char));
         }
 
+        else if (file_mode == 't'){
+            printf("Terminating server and client\n");
+            while (write(named_pipe, "terminate\n", 10) < 0);
+            printf("----------terminating client----------\n\n");
+            break;
+        }
+
         else{
-            printf("You typed wrong mode\n");
+            printf("You typed improper mode \n");
 
             // initialization
             memset(file_name, 0, SIZE * sizeof(char));

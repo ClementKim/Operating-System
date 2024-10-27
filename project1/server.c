@@ -24,8 +24,10 @@ int main(void){
     char buff[SIZE] = {0};
 
     // unlink namedpipe if already exists
-    if (access(PIPE, F_OK) == 0)
+    if (access(PIPE, F_OK) == 0){
         unlink(PIPE);
+        exit(1);
+    }
 
     // create namedpipe
     if (mkfifo(PIPE, 0666) == -1){
@@ -40,18 +42,27 @@ int main(void){
         exit(1);
     }
 
+    printf("----------server----------\n\n");
+
     while (TRUE){
         // receive access request from client
         if (read(named_pipe, buff, SIZE) < 0){
             printf("failed to call read");
             unlink(PIPE);
-            exit(1);
+            exit(2);
         }
 
         sleep(1);
 
         if (!(strcmp(buff, "request\n")))
             printf("received request from the client \n");
+
+        else if (!(strcmp(buff, "terminate\n"))){
+            printf("received terminate signal from the client \n");
+            unlink(PIPE);
+            printf("----------terminating server----------\n\n");
+            break;
+        }
 
         else{
             printf("wrong request from the client \n");
@@ -75,7 +86,7 @@ int main(void){
             if (read(named_pipe, &number_of_reading, sizeof(int)) < 0){
                 printf("failed to receive number of bytes to read from client \n");
                 unlink(PIPE);
-                exit(3);
+                exit(2);
             }
 
             printf("received number of bytes to read: %d \n", number_of_reading);
@@ -97,16 +108,16 @@ int main(void){
                     printf("There's no file named %s\n", received_file_name);
 
                     if (write(named_pipe, "fail\n", 5 * sizeof(char)) < 0)
-                        exit(1);
+                        exit(3);
 
                     sleep(1);
-                    exit(1);
+                    exit(4);
                 }
 
                 if ((bytes_of_file_read = read(fd, buff, number_of_reading)) < 0){
                     printf("failed to read file\n");
                     unlink(PIPE);
-                    exit(1);
+                    exit(2);
                 }
 
                 if (bytes_of_file_read < number_of_reading)
@@ -118,7 +129,7 @@ int main(void){
                 if (write(named_pipe, buff, SIZE) < 0){
                     printf("failed to send data string\n");
                     unlink(PIPE);
-                    exit(1);
+                    exit(3);
                 }
 
                 sleep(1);
@@ -134,14 +145,14 @@ int main(void){
             else if (child == -1) {
                 printf("failed to fork \n");
                 unlink(PIPE);
-                exit(1);
+                exit(-1);
             }
 
             else {
                 if ((wait(0) == -1)) {
                     printf("failed to fork\n");
                     unlink(PIPE);
-                    exit(1);
+                    exit(-1);
                 }
             }
         }
@@ -153,7 +164,7 @@ int main(void){
                 continue;
             }
 
-            sleep(1);
+            sleep(2);
 
             printf("received file name from client: %s \n", received_file_name);
 
@@ -161,7 +172,7 @@ int main(void){
             if (bytes_of_file_write < 0){
                 printf("Failed to receive data string from the client \n");
                 unlink(PIPE);
-                exit(3);
+                exit(2);
             }
 
             bytes_of_file_write = strlen(buff);
@@ -173,10 +184,10 @@ int main(void){
                 if (fd < 0){
                     printf("Failed to write and creat file named %s \n", received_file_name);
                     if (write(named_pipe, "fail\n", 5 * sizeof(char)) < 0)
-                        exit(1);
+                        exit(3);
 
                     sleep(1);
-                    exit(1);
+                    exit(4);
                 }
 
                 lseek(fd, 0, SEEK_END);
@@ -184,7 +195,7 @@ int main(void){
                 if (write(fd, buff, bytes_of_file_write+1) < 0){
                     printf("Failed to write data string \n");
                     unlink(PIPE);
-                    exit(2);
+                    exit(3);
                 }
 
                 sleep(1);
@@ -195,7 +206,7 @@ int main(void){
                 if (write(named_pipe, "succ\n", 5) < 0) {
                     printf("Failed to send number of written bytes \n");
                     unlink(PIPE);
-                    exit(1);
+                    exit(3);
                 }
 
                 sleep(1);
@@ -205,7 +216,7 @@ int main(void){
                 if ((write(named_pipe, &bytes_of_file_write, sizeof(int))) < 0){
                     printf("Failed to send number of written bytes \n");
                     unlink(PIPE);
-                    exit(1);
+                    exit(3);
                 }
 
                 sleep(1);
@@ -223,14 +234,14 @@ int main(void){
             else if (child == -1) {
                 printf("failed to fork \n");
                 unlink(PIPE);
-                exit(1);
+                exit(-1);
             }
 
             else {
                 if ((wait(0) == -1)) {
                     printf("failed to fork\n");
                     unlink(PIPE);
-                    exit(1);
+                    exit(-1);
                 }
             }
 
@@ -245,7 +256,6 @@ int main(void){
         sleep(1);
 
     }
-
 
     return 0;
 }
