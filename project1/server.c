@@ -191,7 +191,6 @@ int main(void){
 
                 close(fd);
 
-                printf("bytes of file write: %d \n", bytes_of_file_write);
 
                 if (write(named_pipe, "succ\n", 5) < 0) {
                     printf("Failed to send number of written bytes \n");
@@ -200,6 +199,8 @@ int main(void){
                 }
 
                 sleep(1);
+
+                printf("bytes of file write: %d \n", bytes_of_file_write);
 
                 if ((write(named_pipe, &bytes_of_file_write, sizeof(int))) < 0){
                     printf("Failed to send number of written bytes \n");

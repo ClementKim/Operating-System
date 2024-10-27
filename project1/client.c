@@ -119,7 +119,7 @@ int main(int argc, char* argv[]){
 
             sleep(2);
 
-            if (read(named_pipe, buff, sizeof(int)) < 0){
+            if (read(named_pipe, buff, SIZE) < 0){
                 printf("failed to receive data from the server \n");
                 exit(1);
             }
