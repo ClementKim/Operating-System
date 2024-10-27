@@ -20,6 +20,7 @@ int main(int argc, char* argv[]){
     char data_string[SIZE] = {0};
     char file_mode;
     char buff[SIZE] = {0};
+    char terminate;
 
     if ((named_pipe = open(PIPE, O_RDWR)) == -1){
         printf("Failed to open named pipe\n");
@@ -27,6 +28,14 @@ int main(int argc, char* argv[]){
     }
 
     while (TRUE){
+        printf("do you want to terminate this code?(y: yes, n: no: ");
+        scanf("%c", &terminate);
+        while (getchar() != '\n');
+
+        if (terminate == 'y'){
+
+        }
+
         printf("Enter the file name: ");
         fgets(file_name, SIZE, stdin);
         file_name[strlen(file_name) - 1] = '\0';
