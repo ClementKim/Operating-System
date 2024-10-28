@@ -45,6 +45,11 @@ int main(void){
     printf("----------server----------\n\n");
 
     while (TRUE){
+        // exit when the named pipe doesn't exist
+        if (access(PIPE, F_OK) < 0){
+            exit(1);
+        }
+
         // memset(buff, 0, SIZE * sizeof(char));
         // receive access request from client
         // types of access request: request, terminate
