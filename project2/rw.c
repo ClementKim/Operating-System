@@ -51,16 +51,8 @@ void *reader(void *arg){
         line_number = rand()%MAXIMUM_CODE;
 
         git_tracking++;
-        if (programmer_todo > 0){
-            git_tracking--;
-            continue;
-        }
 
         check = code[line_number];
-        if (programmer_todo > 0){
-            git_tracking--;
-            continue;
-        }
 
         if (!check)
             printf("failed to push since nothing changed on line number %d\n", line_number);
