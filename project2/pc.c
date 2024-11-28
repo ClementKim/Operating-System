@@ -48,8 +48,8 @@ int main(void){
     scanf("%d", &number_of_factories);
 
     while (!((number_of_factories >= 1) && (number_of_factories <= 5))){
-        printf("type the number of factories(maximum 5): ");
         printf("the typed range must be 1 to 5\n");
+        printf("type the number of factories(maximum 5): ");
         scanf("%d", &number_of_factories);
     }
 
