@@ -6,20 +6,23 @@
 #define TRUE 1
 #define FALSE 0
 
+// define MACRO variables
 #define MAXIMUM_COOKIES 10
 #define MAXIMUM_FACTORIES 5
 #define MAXIMUM_KIDS 10
 
+// global variables
 int cookies = 0;
 
+// pointer function about producer which takes void pointer arg as argument
 void *producer(void *arg){
     while (TRUE){
         while (cookies > MAXIMUM_COOKIES){
             printf("enough cookies\n");
         }
 
-        printf("number of cookies: %d\n", cookies);
         cookies++;
+        printf("number of cookies: %d\n", cookies);
     }
 }
 
@@ -29,8 +32,8 @@ void *consumer(void *arg){
             printf("need producing cookies\n");
         }
         
-        printf("number of cookies: %d\n", cookies);
         cookies--;
+        printf("number of cookies: %d\n", cookies);
     }
 }
 

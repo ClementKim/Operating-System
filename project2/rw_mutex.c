@@ -15,32 +15,27 @@ int code[MAXIMUM_CODE] = {0};
 int programmer_todo = 0;
 int git_tracking = 0;
 
-pthread_mutex_t decay_mutex_lock = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 
 void *writer(void *arg){
     int line_number;
 
     srand((unsigned int)time(NULL));
     while (TRUE){
-        pthread_mutex_lock(&decay_mutex_lock);
+        pthread_mutex_lock(&lock);
 
-        if (programmer_todo > 0)
-            printf("programmers are on a work\n");
+        line_number = rand()%MAXIMUM_CODE;
 
-        else if (programmer_todo == 0){
-            line_number = rand()%MAXIMUM_CODE;
+        programmer_todo++;
 
-            programmer_todo++;
+        code[line_number] = rand()%1000;
 
-            code[line_number] = rand()%1000;
+        printf("programmer is writing %d on line number %d\n", code[line_number], line_number);
 
-            printf("programmer is writing %d on line number %d\n", code[line_number], line_number);
+        programmer_todo--;
+        printf("present status of programmer: %d\n", programmer_todo);
 
-            programmer_todo--;
-            printf("present status of programmer: %d\n", programmer_todo);
-        }
-
-        pthread_mutex_unlock(&decay_mutex_lock);
+        pthread_mutex_unlock(&lock);
     }
 }
 
@@ -51,29 +46,24 @@ void *reader(void *arg){
     srand((unsigned int)time(NULL));
 
     while (TRUE){
-        pthread_mutex_lock(&decay_mutex_lock);
+        pthread_mutex_lock(&lock);
+        
+        line_number = rand()%MAXIMUM_CODE;
 
-        if (git_tracking > 0)
-            printf("git: need 'git add *' command\n");
+        git_tracking++;
 
-        else if (git_tracking == 0) {
-            line_number = rand()%MAXIMUM_CODE;
+        check = code[line_number];
 
-            git_tracking++;
+        if (!check)
+            printf("failed to push since nothing changed on line number %d\n", line_number);
+        else
+            printf("pushed since changed checked on line number %d\n", line_number);
 
-            check = code[line_number];
+        git_tracking--;
 
-            if (!check)
-                printf("failed to push since nothing changed on line number %d\n", line_number);
-            else
-                printf("pushed since changed checked on line number %d\n", line_number);
+        printf("git is tracking %d changes\n", git_tracking);
 
-            git_tracking--;
-
-            printf("git is tracking %d changes\n", git_tracking);
-        }
-
-        pthread_mutex_unlock(&decay_mutex_lock);
+        pthread_mutex_unlock(&lock);
     }
 }
 

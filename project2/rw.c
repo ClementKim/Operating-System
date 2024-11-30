@@ -7,10 +7,12 @@
 #define TRUE 1
 #define FALSE 0
 
+// define MACRO variables
 #define MAXIMUM_CODE 1000
 #define MAXIMUM_PROGRAMMER 5
 #define MAXIMUM_GIT 10
 
+// global variables
 int code[MAXIMUM_CODE] = {0};
 int programmer_todo = 0;
 int git_tracking = 0;
@@ -27,6 +29,11 @@ void *writer(void *arg){
         line_number = rand()%MAXIMUM_CODE;
 
         programmer_todo++;
+
+        if (git_tracking > 0){
+            programmer_todo--;
+            continue;
+        }
 
         code[line_number] = rand()%1000;
 

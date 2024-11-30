@@ -11,38 +11,39 @@
 #define MAXIMUM_KIDS 10
 
 int cookies = 0;
-pthread_mutex_t decay_mutex_lock = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 
 void *producer(void *arg){
     while (TRUE){
-        pthread_mutex_lock(&decay_mutex_lock);
+        pthread_mutex_lock(&lock);
        
         if (cookies < MAXIMUM_COOKIES){
-            printf("number of cookies: %d\n", cookies);
             cookies++;
+            printf("number of cookies: %d\n", cookies);
         }
 
         else
             printf("enough cookies\n");
         
-        pthread_mutex_unlock(&decay_mutex_lock);
+        pthread_mutex_unlock(&lock);
     }
 }
 
 void *consumer(void *arg){
     while (TRUE){
-        pthread_mutex_lock(&decay_mutex_lock);
+        pthread_mutex_lock(&lock);
+            printf("number of cookies: %d\n", cookies);
 
         if (cookies > 0){
-            printf("number of cookies: %d\n", cookies);
             cookies--;
+            printf("number of cookies: %d\n", cookies);
         }
 
         else
             printf("need producing cookies\n");
 
         
-        pthread_mutex_unlock(&decay_mutex_lock);
+        pthread_mutex_unlock(&lock);
     }
 }
 
